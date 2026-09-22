@@ -20,7 +20,7 @@ import {
 import { ModelProvider } from '@/libs/agent-runtime';
 import { UserModelProviderConfig } from '@/types/user/settings';
 
-import { FAMILY_OS_MODEL } from './agent';
+export { FAMILY_OS_MODEL as DEFAULT_MODEL } from './agent';
 
 export const DEFAULT_LLM_CONFIG: UserModelProviderConfig = {
   anthropic: {
@@ -92,7 +92,5 @@ export const DEFAULT_LLM_CONFIG: UserModelProviderConfig = {
     enabledModels: filterEnabledModels(ZhiPuProviderCard),
   },
 };
-
-export const DEFAULT_MODEL = FAMILY_OS_MODEL;
 
 export const DEFAULT_PROVIDER = ModelProvider.OpenAI;

@@ -4,7 +4,7 @@ import { LayoutProps } from '../type';
 import ChatHeader from './ChatHeader';
 import HotKeys from './HotKeys';
 
-const Layout = ({ children, topic, conversation }: LayoutProps) => {
+const Layout = ({ children, conversation }: LayoutProps) => {
   return (
     <>
       <ChatHeader />
