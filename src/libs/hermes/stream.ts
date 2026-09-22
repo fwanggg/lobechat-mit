@@ -1,20 +1,29 @@
 import { streamChat } from './client';
 
 /**
- * Turn Hermes' chat stream into the SSE protocol the chat UI already speaks.
+ * Translate Hermes' chat stream into the SSE the chat UI consumes.
  *
- * The UI's stream consumer understands exactly four chunk types
- * (src/libs/agent-runtime/utils/streams/protocol.ts):
- *   {type:'text', data:string} | {type:'tool_calls', data} | {type:'data', data} | {type:'stop'}
+ * The wire format is standard SSE with a NAMED EVENT - the event name is what
+ * the client dispatches on, not the payload:
  *
- * Hermes emits its own vocabulary instead:
- *   run.started, message.started, assistant.delta, tool.progress,
- *   tool.started/completed/failed, assistant.completed, run.completed, error, done
+ *   - src/utils/fetch.ts reads `ev.event` inside its onmessage handler and
+ *     switches on 'text' or 'tool_calls'. An unnamed frame arrives as 'message'
+ *     and matches neither case, so its content is silently dropped.
+ *   - src/libs/agent-runtime/utils/streams/protocol.ts tracks the same name via
+ *     createCallbacksTransformer, confirming the `event:` line is load-bearing.
  *
- * So this is a translation, not a re-implementation: deltas become text chunks,
- * the end of the run becomes a stop chunk. Everything else is dropped - the
- * minimal UI renders text, and the authoritative transcript comes from
- * GET /messages afterwards regardless of what was streamed.
+ * So a delta goes out as:
+ *
+ *   event: text
+ *   data: "<delta>"
+ *
+ * The data line is JSON (the client calls JSON.parse and falls back to raw text
+ * if that throws). Hermes itself speaks a different vocabulary - run.started,
+ * assistant.delta, tool.progress, assistant.completed, run.completed, error,
+ * done - which this module maps down to the one event name the UI needs.
+ *
+ * There is no terminator to send: the client's onFinish fires when the body
+ * closes, which it does when the run ends.
  */
 
 /** Pull the JSON payload out of one `event: X\ndata: {...}` SSE frame. */
@@ -36,7 +45,8 @@ const parseFrame = (frame: string): { data: any; event: string } | null => {
   }
 };
 
-const sse = (payload: unknown) => `data: ${JSON.stringify(payload)}\n\n`;
+/** One SSE frame, with the event name the client dispatches on. */
+const sse = (data: string) => `event: text\ndata: ${JSON.stringify(data)}\n\n`;
 
 export interface HermesStreamOptions {
   onError?: (message: string) => void;
@@ -64,7 +74,6 @@ export const hermesChatStream = async (
 
   let buffer = '';
   let sawDelta = false;
-  let finished = false;
 
   return new ReadableStream<Uint8Array>({
     async cancel() {
@@ -77,10 +86,8 @@ export const hermesChatStream = async (
           const { done, value } = await reader.read();
 
           if (done) {
-            if (!finished) {
-              finished = true;
-              controller.enqueue(encoder.encode(sse({ data: '', type: 'stop' })));
-            }
+            // The run is over; closing the body is what fires the client's
+            // onFinish. Nothing more to send.
             controller.close();
             return;
           }
@@ -102,7 +109,7 @@ export const hermesChatStream = async (
 
             if (event === 'assistant.delta' && typeof data?.delta === 'string' && data.delta) {
               sawDelta = true;
-              controller.enqueue(encoder.encode(sse({ data: data.delta, type: 'text' })));
+              controller.enqueue(encoder.encode(sse(data.delta)));
               continue;
             }
 
@@ -112,29 +119,14 @@ export const hermesChatStream = async (
             if (event === 'assistant.completed') {
               const content = typeof data?.content === 'string' ? data.content : '';
 
-              if (content && !sawDelta) {
-                controller.enqueue(encoder.encode(sse({ data: content, type: 'text' })));
-              }
-
-              if (!finished) {
-                finished = true;
-                controller.enqueue(encoder.encode(sse({ data: '', type: 'stop' })));
-              }
+              if (content && !sawDelta) controller.enqueue(encoder.encode(sse(content)));
               continue;
             }
 
             if (event === 'error') {
               const message = data?.message || 'Hermes reported an error mid-turn';
               options.onError?.(message);
-              controller.enqueue(encoder.encode(sse({ data: message, type: 'text' })));
-              continue;
-            }
-
-            if (event === 'done') {
-              if (!finished) {
-                finished = true;
-                controller.enqueue(encoder.encode(sse({ data: '', type: 'stop' })));
-              }
+              controller.enqueue(encoder.encode(sse(message)));
             }
           }
         }
