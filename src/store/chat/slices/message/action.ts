@@ -593,6 +593,11 @@ export const chatMessage: StateCreator<
     });
 
     internal_toggleChatLoading(false, assistantId, n('generateMessage(end)') as string);
+    // The turn is over and no longer marked busy. Pull the authoritative
+    // transcript now: the ids used above are local to this client, while the
+    // backend issued its own when it stored the turn - so without this the
+    // optimistic rows sit empty forever and the real reply never appears.
+    await get().refreshMessages();
 
     return {
       isFunctionCall,
