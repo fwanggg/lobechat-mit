@@ -198,6 +198,13 @@ export const chatTopic: StateCreator<
         suspense: true,
         fallbackData: [],
         onSuccess: (topics) => {
+          // The message area waits on an active topic, so with no synthetic
+          // default row nothing would ever resolve. Open the most recently
+          // active real topic instead - Hermes returns sessions newest first.
+          if (!get().activeTopicId && topics.length > 0) {
+            get().switchTopic(topics[0].id);
+          }
+
           const nextMap = { ...get().topicMaps, [sessionId]: topics };
 
           // no need to update map if the topics have been init and the map is the same

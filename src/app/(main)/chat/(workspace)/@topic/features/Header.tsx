@@ -80,7 +80,7 @@ const Header = memo(() => {
           </Dropdown>
         </>
       }
-      title={`${t('topic.title')} ${topicLength > 1 ? topicLength + 1 : ''}`}
+      title={`${t('topic.title')} ${topicLength > 0 ? topicLength : ''}`}
     />
   );
 });
