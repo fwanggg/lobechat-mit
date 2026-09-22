@@ -58,13 +58,13 @@ describe('getAnalyticsConfig', () => {
 
     expect(console.warn).toHaveBeenCalledTimes(3);
     expect(console.warn).toHaveBeenCalledWith(
-      'NEXT_PUBLIC_PLAUSIBLE_DOMAIN is deprecated. Please use PLAUSIBLE_DOMAIN instead. We will remove it in LobeChat 1.0',
+      'NEXT_PUBLIC_PLAUSIBLE_DOMAIN is deprecated. Please use PLAUSIBLE_DOMAIN instead. We will remove it in Family-OS 1.0',
     );
     expect(console.warn).toHaveBeenCalledWith(
-      'NEXT_PUBLIC_POSTHOG_KEY is deprecated. Please use POSTHOG_KEY instead. We will remove it in LobeChat 1.0',
+      'NEXT_PUBLIC_POSTHOG_KEY is deprecated. Please use POSTHOG_KEY instead. We will remove it in Family-OS 1.0',
     );
     expect(console.warn).toHaveBeenCalledWith(
-      'NEXT_PUBLIC_UMAMI_WEBSITE_ID is deprecated. Please use UMAMI_WEBSITE_ID instead. We will remove it in LobeChat 1.0',
+      'NEXT_PUBLIC_UMAMI_WEBSITE_ID is deprecated. Please use UMAMI_WEBSITE_ID instead. We will remove it in Family-OS 1.0',
     );
   });
 });

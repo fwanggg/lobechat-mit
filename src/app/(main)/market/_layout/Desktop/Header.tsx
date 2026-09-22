@@ -1,8 +1,10 @@
 'use client';
 
-import { ChatHeader, Logo } from '@lobehub/ui';
+import { ChatHeader } from '@lobehub/ui';
 import { createStyles } from 'antd-style';
 import { memo } from 'react';
+
+import FamilyOSLogo from '@/components/FamilyOSLogo';
 
 import ShareAgentButton from '../../features/ShareAgentButton';
 
@@ -18,7 +20,7 @@ const Header = memo(() => {
 
   return (
     <ChatHeader
-      left={<Logo className={styles.logo} extra={'Discover'} size={36} type={'text'} />}
+      left={<FamilyOSLogo className={styles.logo} extra={'Discover'} size={36} type={'text'} />}
       right={<ShareAgentButton />}
     />
   );

@@ -7,7 +7,11 @@ import Mobile from './_layout/Mobile';
 import SessionHydration from './features/SessionHydration';
 import SkeletonList from './features/SkeletonList';
 
-const SessionListContent = lazy(() => import('./features/SessionListContent'));
+// Family-OS: the left column shows the conversation's topic list. The agent list is unused -
+// the household has exactly one agent, and topics are what a family actually navigates by.
+const TopicListContent = lazy(
+  () => import('@/app/(main)/chat/(workspace)/@topic/features/TopicListContent'),
+);
 
 const Layout = ServerLayout({ Desktop, Mobile });
 
@@ -16,7 +20,7 @@ const Session = () => {
     <>
       <Layout>
         <Suspense fallback={<SkeletonList />}>
-          <SessionListContent />
+          <TopicListContent />
         </Suspense>
       </Layout>
       <SessionHydration />

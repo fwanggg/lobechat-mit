@@ -7,6 +7,7 @@ import {
   DEFAULT_PROVIDER,
   DEFAUTT_AGENT_TTS_CONFIG,
 } from '@/const/settings';
+import { FAMILY_OS_MODEL } from '@/const/settings/agent';
 import { AgentStore } from '@/store/agent';
 import { LobeAgentChatConfig, LobeAgentConfig, LobeAgentTTSConfig } from '@/types/agent';
 import { merge } from '@/utils/merge';
@@ -20,7 +21,7 @@ const inboxAgentConfig = (s: AgentStore) =>
 const inboxAgentModel = (s: AgentStore) => inboxAgentConfig(s).model;
 
 const currentAgentConfig = (s: AgentStore): LobeAgentConfig =>
-  merge(s.defaultAgentConfig, s.agentMap[s.activeId]);
+  ({ ...merge(s.defaultAgentConfig, s.agentMap[s.activeId]), model: FAMILY_OS_MODEL });
 
 const currentAgentChatConfig = (s: AgentStore): LobeAgentChatConfig =>
   currentAgentConfig(s).chatConfig || {};

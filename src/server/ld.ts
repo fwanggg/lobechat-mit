@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 
 import { getAppConfig } from '@/config/app';
-import { EMAIL_BUSINESS, EMAIL_SUPPORT, OFFICIAL_SITE, OFFICIAL_URL, X } from '@/const/url';
+import { EMAIL_BUSINESS, EMAIL_SUPPORT, OFFICIAL_URL, X } from '@/const/url';
 
 import pkg from '../../package.json';
 
@@ -23,7 +23,7 @@ export const AUTHOR_LIST = {
   lobehub: {
     avatar: 'https://avatars.githubusercontent.com/u/131470832?v=4',
     desc: 'Official Account',
-    name: 'LobeHub',
+    name: 'Family-OS',
     url: 'https://github.com/lobehub',
   },
 };
@@ -72,7 +72,7 @@ class Ld {
     return {
       '@id': this.getId(SITE_URL, '#organization'),
       '@type': 'Organization',
-      'alternateName': 'LobeChat',
+      'alternateName': 'Family-OS',
       'contactPoint': {
         '@type': 'ContactPoint',
         'contactType': 'customer support',
@@ -82,21 +82,21 @@ class Ld {
         'We are a group of e/acc design-engineers, hoping to provide modern design components and tools for AIGC, and creating a technology-driven forum, fostering knowledge interaction and the exchange of ideas that may culminate in mutual inspiration and collaborative innovation.',
       'email': EMAIL_BUSINESS,
       'founders': [this.getAuthors(['arvinxx']), this.getAuthors(['canisminor'])],
-      'image': urlJoin(OFFICIAL_SITE, '/icon-512x512.png'),
+      'image': urlJoin(SITE_URL, '/icons/icon-512x512.png'),
       'logo': {
         '@type': 'ImageObject',
         'height': 512,
-        'url': urlJoin(OFFICIAL_SITE, '/icon-512x512.png'),
+        'url': urlJoin(SITE_URL, '/icons/icon-512x512.png'),
         'width': 512,
       },
-      'name': 'LobeHub',
+      'name': 'Family-OS',
       'sameAs': [
         X,
         'https://github.com/lobehub',
         'https://medium.com/@lobehub',
         'https://www.youtube.com/@lobehub',
       ],
-      'url': OFFICIAL_SITE,
+      'url': SITE_URL,
     };
   }
 
@@ -192,7 +192,7 @@ class Ld {
       '@type': 'WebSite',
       'description': pkg.description,
       'inLanguage': 'en-US',
-      'name': 'LobeChat',
+      'name': 'Family-OS',
       'publisher': {
         '@id': this.getId(SITE_URL, '#organization'),
       },
@@ -207,7 +207,7 @@ class Ld {
   }
 
   private fixTitle(title: string) {
-    return title.includes('LobeChat') ? title : `${title} · LobeChat`;
+    return title.includes('Family-OS') ? title : `${title} · Family-OS`;
   }
 
   private fixUrl(url: string) {

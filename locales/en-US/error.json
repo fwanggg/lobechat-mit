@@ -53,7 +53,7 @@
     "502": "Sorry, the server seems to be lost and is temporarily unable to provide service. Please try again later.",
     "503": "Sorry, the server is currently unable to process your request, possibly due to overload or maintenance. Please try again later.",
     "504": "Sorry, the server did not receive a response from the upstream server. Please try again later.",
-    "AgentRuntimeError": "Lobe language model runtime execution error. Please troubleshoot or retry based on the following information.",
+    "AgentRuntimeError": "Family-OS language model runtime execution error. Please troubleshoot or retry based on the following information.",
     "InvalidAccessCode": "Invalid access code or empty. Please enter the correct access code or add a custom API Key.",
     "InvalidBedrockCredentials": "Bedrock authentication failed. Please check the AccessKeyId/SecretAccessKey and retry.",
     "InvalidClerkUser": "Sorry, you are not currently logged in. Please log in or register an account to continue.",

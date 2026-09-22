@@ -2,7 +2,6 @@ import { memo } from 'react';
 import { Flexbox } from 'react-layout-kit';
 
 import ModelTag from '@/components/ModelTag';
-import ModelSwitchPanel from '@/features/ModelSwitchPanel';
 import { useAgentStore } from '@/store/agent';
 import { agentSelectors } from '@/store/agent/selectors';
 import { useUserStore } from '@/store/user';
@@ -20,9 +19,7 @@ const TitleTags = memo(() => {
 
   return (
     <Flexbox align={'center'} horizontal>
-      <ModelSwitchPanel>
-        <ModelTag model={model} />
-      </ModelSwitchPanel>
+      <ModelTag model={model} />
       {showPlugin && plugins?.length > 0 && <PluginTag plugins={plugins} />}
     </Flexbox>
   );

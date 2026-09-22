@@ -20,6 +20,8 @@ import {
 import { ModelProvider } from '@/libs/agent-runtime';
 import { UserModelProviderConfig } from '@/types/user/settings';
 
+import { FAMILY_OS_MODEL } from './agent';
+
 export const DEFAULT_LLM_CONFIG: UserModelProviderConfig = {
   anthropic: {
     enabled: false,
@@ -91,6 +93,6 @@ export const DEFAULT_LLM_CONFIG: UserModelProviderConfig = {
   },
 };
 
-export const DEFAULT_MODEL = 'gpt-3.5-turbo';
+export const DEFAULT_MODEL = FAMILY_OS_MODEL;
 
 export const DEFAULT_PROVIDER = ModelProvider.OpenAI;

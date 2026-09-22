@@ -1,7 +1,7 @@
 export default {
   about: '关于',
   advanceSettings: '高级设置',
-  appInitializing: 'LobeChat 启动中，请耐心等待...',
+  appInitializing: 'Family-OS 启动中，请耐心等待...',
   autoGenerate: '自动补全',
   autoGenerateTooltip: '基于提示词自动补全助手描述',
   autoGenerateTooltipDisabled: '请填写提示词后使用自动补全功能',
@@ -44,7 +44,7 @@ export default {
     and: '并',
     feedback: {
       action: '分享反馈',
-      desc: '您的每一个想法和建议对我们来说都弥足珍贵，我们迫不及待地想知道您的看法！欢迎联系我们提供产品功能和使用体验反馈，帮助我们将 LobeChat 建设得更好。',
+      desc: '您的每一个想法和建议对我们来说都弥足珍贵，我们迫不及待地想知道您的看法！欢迎联系我们提供产品功能和使用体验反馈，帮助我们将 Family-OS 建设得更好。',
       title: '在 GitHub 分享您宝贵的反馈',
     },
     later: '稍后',
@@ -183,9 +183,9 @@ export default {
   telemetry: {
     allow: '允许',
     deny: '拒绝',
-    desc: '我们希望匿名获取你的使用信息，进而帮助我们改进 LobeChat，并为你提供更好的产品体验。你可以在「设置」 - 「关于」随时关闭。',
+    desc: '我们希望匿名获取你的使用信息，进而帮助我们改进 Family-OS，并为你提供更好的产品体验。你可以在「设置」 - 「关于」随时关闭。',
     learnMore: '了解更多',
-    title: '帮助 LobeChat 做得更好',
+    title: '帮助 Family-OS 做得更好',
   },
   temp: '临时',
   terms: '服务条款',

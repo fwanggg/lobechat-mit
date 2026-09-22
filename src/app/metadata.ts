@@ -4,7 +4,7 @@ import { appEnv, getAppConfig } from '@/config/app';
 import { OFFICIAL_URL } from '@/const/url';
 import { translation } from '@/server/translation';
 
-const title = 'LobeChat';
+const title = 'Family-OS';
 
 const { SITE_URL = OFFICIAL_URL } = getAppConfig();
 const BASE_PATH = appEnv.NEXT_PUBLIC_BASE_PATH;
@@ -22,7 +22,10 @@ export const generateMetadata = async (): Promise<Metadata> => {
     description: t('chat.description'),
     icons: {
       apple: '/apple-touch-icon.png',
-      icon: '/favicon.ico',
+      icon: [
+        { rel: 'icon', type: 'image/svg+xml', url: '/favicon.svg' },
+        { rel: 'icon', type: 'image/x-icon', url: '/favicon.ico' },
+      ],
       shortcut: '/favicon-32x32.ico',
     },
     manifest: noManifest ? undefined : '/manifest.json',
@@ -45,13 +48,12 @@ export const generateMetadata = async (): Promise<Metadata> => {
     },
     title: {
       default: t('chat.title'),
-      template: '%s · LobeChat',
+      template: '%s · Family-OS',
     },
     twitter: {
       card: 'summary_large_image',
       description: t('chat.description'),
       images: ['/og/cover.png'],
-      site: '@lobehub',
       title: t('chat.title'),
     },
   };

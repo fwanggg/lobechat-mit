@@ -10,7 +10,12 @@ import BottomActions from './BottomActions';
 import TopActions from './TopActions';
 
 const Nav = memo(() => {
+  // Family-OS: the rail is hidden. It only carried product chrome (market/docs links, the
+  // upstream account menu); this build is a single chat surface.
+  const SHOW_NAV = false;
   const sidebarKey = useActiveTabKey();
+  if (!SHOW_NAV) return null;
+
   return (
     <SideNav
       avatar={<Avatar />}

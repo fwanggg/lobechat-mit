@@ -1,6 +1,7 @@
 import { uniqBy } from 'lodash-es';
 
 import { filterEnabledModels } from '@/config/modelProviders';
+import { FAMILY_OS_MODEL } from '@/const/settings/agent';
 import { ChatModelCard, ModelProviderCard } from '@/types/llm';
 import { ServerModelProviderConfig } from '@/types/serverConfig';
 import { GlobalLLMProviderKey } from '@/types/user/settings';
@@ -107,10 +108,13 @@ const isModelEnabledFunctionCall = (id: string) => (s: UserStore) =>
 
 // vision model white list, these models will change the content from string to array
 // refs: https://github.com/lobehub/lobe-chat/issues/790
+// the household agent accepts images
 const isModelEnabledVision = (id: string) => (s: UserStore) =>
-  getModelCardById(id)(s)?.vision || id.includes('vision');
+  getModelCardById(id)(s)?.vision || id.includes('vision') || id === FAMILY_OS_MODEL;
 
-const isModelEnabledFiles = (id: string) => (s: UserStore) => getModelCardById(id)(s)?.files;
+// the household agent accepts images
+const isModelEnabledFiles = (id: string) => (s: UserStore) =>
+  getModelCardById(id)(s)?.files || id === FAMILY_OS_MODEL;
 
 const isModelEnabledUpload = (id: string) => (s: UserStore) =>
   isModelEnabledVision(id)(s) || isModelEnabledFiles(id)(s);

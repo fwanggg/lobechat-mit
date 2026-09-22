@@ -92,7 +92,7 @@ const DragUpload = memo(() => {
 
   const enabledFiles = useUserStore(modelProviderSelectors.isModelEnabledFiles(model));
 
-  const uploadImages = async (fileList: FileList | undefined) => {
+  const uploadImages = async (fileList: FileList | File[] | undefined) => {
     if (!fileList || fileList.length === 0) return;
 
     const pools = Array.from(fileList).map(async (file) => {
@@ -153,8 +153,14 @@ const DragUpload = memo(() => {
   };
 
   const handlePaste = (event: ClipboardEvent) => {
-    // get files from clipboard
-    const files = event.clipboardData?.files;
+    // clipboard images are not exposed through `clipboardData.files`, only through `items`
+    const items = event.clipboardData?.items;
+    if (!items) return;
+
+    const files = Array.from(items)
+      .filter((item) => item.kind === 'file')
+      .map((item) => item.getAsFile())
+      .filter((file): file is File => !!file);
 
     uploadImages(files);
   };

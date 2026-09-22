@@ -19,9 +19,12 @@ export const DEFAULT_AGENT_CHAT_CONFIG: LobeAgentChatConfig = {
   historyCount: 1,
 };
 
+/** The single model this build talks to: the household agent's OpenAI-compatible API. */
+export const FAMILY_OS_MODEL = 'family-os';
+
 export const DEFAULT_AGENT_CONFIG: LobeAgentConfig = {
   chatConfig: DEFAULT_AGENT_CHAT_CONFIG,
-  model: 'gpt-3.5-turbo',
+  model: FAMILY_OS_MODEL,
   params: {
     frequency_penalty: 0,
     presence_penalty: 0,
