@@ -60,3 +60,6 @@ sitemap*.xml
 robots.txt
 
 *.patch
+
+# generated locally; upstream resolves without a lockfile (.npmrc lockfile=false)
+pnpm-lock.yaml
