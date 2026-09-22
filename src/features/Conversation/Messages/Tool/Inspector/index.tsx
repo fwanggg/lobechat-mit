@@ -49,7 +49,7 @@ const Inspector = memo<InspectorProps>(
     const showRightAction = useToolStore(pluginSelectors.isPluginHasUI(identifier));
     const pluginAvatar = pluginHelpers.getPluginAvatar(pluginMeta);
 
-    const pluginTitle = pluginHelpers.getPluginTitle(pluginMeta) ?? t('unknownPlugin');
+    const pluginTitle = pluginHelpers.getPluginTitle(pluginMeta) ?? identifier;
 
     const avatar = pluginAvatar ? (
       <Avatar alt={pluginTitle} avatar={pluginAvatar} size={32} />

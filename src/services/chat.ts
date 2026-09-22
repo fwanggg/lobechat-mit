@@ -442,7 +442,9 @@ class ChatService {
         case 'tool': {
           return {
             content: m.content,
-            name: genToolCallingName(m.plugin!.identifier, m.plugin!.apiName, m.plugin?.type),
+            // Hermes names its own tools and there is no plugin registry in this build,
+            // so take the name from the message rather than a plugin lookup.
+            name: m.tool_name || 'tool',
             role: m.role,
             tool_call_id: m.tool_call_id,
           };

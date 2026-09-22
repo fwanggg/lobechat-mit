@@ -51,6 +51,7 @@ const toMessage = (message: HermesMessageShape, topicId: string): ChatMessage =>
     id: String(message.id),
     role,
     sessionId: topicId,
+    tool_name: message.tool_name ?? undefined,
     tool_call_id: message.tool_call_id ?? undefined,
     topicId,
     updatedAt: createdAt,
@@ -61,6 +62,10 @@ const toMessage = (message: HermesMessageShape, topicId: string): ChatMessage =>
 const localId = () => `local_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 
 const fetchMessages = async (topicId: string): Promise<ChatMessage[]> => {
+  // The inbox is a LobeChat pseudo-session with no Hermes counterpart; asking
+  // for its transcript only produces a 404 on every load.
+  if (!topicId || topicId === 'inbox') return [];
+
   const res = await fetch(
     `/api/hermes/sessions/${encodeURIComponent(topicId)}/messages?limit=300&order=oldest`,
   );

@@ -67,6 +67,8 @@ export interface ChatMessage extends BaseDataModel {
   sessionId?: string;
 
   tool_call_id?: string;
+  /** Name of the tool that produced this message, as the backend reported it. */
+  tool_name?: string;
   tools?: ChatToolPayload[];
 
   /**

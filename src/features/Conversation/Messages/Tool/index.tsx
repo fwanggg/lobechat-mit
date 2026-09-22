@@ -10,7 +10,7 @@ import { ChatMessage } from '@/types/message';
 
 import Inspector from './Inspector';
 
-export const ToolMessage = memo<ChatMessage>(({ id, content, plugin }) => {
+export const ToolMessage = memo<ChatMessage>(({ id, content, plugin , tool_name }) => {
   const loading = useChatStore(chatSelectors.isMessageGenerating(id));
   const fontSize = useUserStore(userGeneralSettingsSelectors.fontSize);
 
@@ -21,7 +21,7 @@ export const ToolMessage = memo<ChatMessage>(({ id, content, plugin }) => {
       <Inspector
         arguments={plugin?.arguments}
         content={content}
-        identifier={plugin?.identifier}
+        identifier={plugin?.identifier || tool_name}
         loading={loading}
         payload={plugin}
         setShow={setShowContent}
