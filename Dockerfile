@@ -23,6 +23,9 @@ COPY .npmrc ./
 
 # If you want to build docker in China
 # RUN npm config set registry https://registry.npmmirror.com/
+# pnpm 10 blocks dependency build scripts by default; this 2024 tree needs them
+# (sharp, esbuild, core-js). The upstream image was built when pnpm 9 was current.
+RUN pnpm config set dangerously-allow-all-builds true
 RUN pnpm i
 
 COPY . .
