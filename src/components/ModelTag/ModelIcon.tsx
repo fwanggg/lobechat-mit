@@ -26,7 +26,6 @@ import {
   Rwkv,
   Spark,
   Stability,
-  Tongyi,
   Wenxin,
   Yi,
 } from '@lobehub/icons';
@@ -51,7 +50,6 @@ const ModelIcon = memo<ModelIconProps>(({ model, size = 12 }) => {
   if (model.includes('gemini')) return <Gemini size={size} />;
   if (model.includes('gemma')) return <Gemma.Simple size={size} />;
   if (model.includes('moonshot')) return <Moonshot size={size} />;
-  if (model.includes('qwen')) return <Tongyi size={size} />;
   if (model.includes('minmax')) return <Minimax size={size} />;
   if (model.includes('abab')) return <Minimax size={size} />;
   if (model.includes('mistral') || model.includes('mixtral')) return <Mistral size={size} />;
