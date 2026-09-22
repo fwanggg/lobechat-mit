@@ -391,9 +391,18 @@ export const chatMessage: StateCreator<
         messageService.getMessages(sessionId, topicId),
       {
         onSuccess: (messages, key) => {
+          // A turn in flight has no rows on the server yet - Hermes writes them
+          // when it completes. Replacing the list wholesale here would drop the
+          // user's message and the pending reply until the turn lands, so carry
+          // the local optimistic messages over while anything is still running.
+          const local = get().messagesMap[messageMapKey(sessionId, activeTopicId)] || [];
+          const busy = get().messageLoadingIds.length > 0 || get().chatLoadingIds.length > 0;
+          const pending = busy ? local.filter((m) => m.id.startsWith('tmp_')) : [];
+          const merged = [...messages, ...pending];
+
           const nextMap = {
             ...get().messagesMap,
-            [messageMapKey(sessionId, activeTopicId)]: messages,
+            [messageMapKey(sessionId, activeTopicId)]: merged,
           };
           // no need to update map if the messages have been init and the map is the same
           if (get().messagesInit && isEqual(nextMap, get().messagesMap)) return;
