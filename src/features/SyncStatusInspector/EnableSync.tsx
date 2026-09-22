@@ -1,17 +1,15 @@
-import { ActionIcon, Avatar, Icon } from '@lobehub/ui';
+import { Avatar, Icon } from '@lobehub/ui';
 import { Divider, Popover, Switch, Tag, Typography } from 'antd';
 import { createStyles } from 'antd-style';
 import { TooltipPlacement } from 'antd/es/tooltip';
 import isEqual from 'fast-deep-equal';
-import { LucideCloudy, LucideLaptop, LucideSmartphone, SettingsIcon } from 'lucide-react';
-import Link from 'next/link';
+import { LucideCloudy, LucideLaptop, LucideSmartphone } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
 import { useUserStore } from '@/store/user';
 import { syncSettingsSelectors } from '@/store/user/selectors';
-import { pathString } from '@/utils/url';
 
 import EnableTag from './EnableTag';
 
@@ -118,11 +116,6 @@ const EnableSync = memo<EnableSyncProps>(({ hiddenActions, placement = 'bottomLe
               <Switch checked={enableWebRTC} onChange={switchSync} size={'small'} />
             )}
           </Flexbox>
-          {!hiddenActions && (
-            <Link href={pathString('/settings/sync')}>
-              <ActionIcon icon={SettingsIcon} title={t('sync.actions.settings')} />
-            </Link>
-          )}
         </Flexbox>
       }
     >

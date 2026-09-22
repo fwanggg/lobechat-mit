@@ -37,7 +37,7 @@ const Locale = memo<LocaleLayoutProps>(({ children, defaultLang, antdLocale }) =
 
       if (lang === lng) return;
 
-      const newLocale = await getAntdLocale(lng);
+      const newLocale = getAntdLocale();
       setLocale(newLocale);
     };
 

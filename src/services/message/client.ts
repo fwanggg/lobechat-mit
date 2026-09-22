@@ -1,83 +1,158 @@
-import dayjs from 'dayjs';
-
-import { MessageModel } from '@/database/client/models/message';
 import { DB_Message } from '@/database/client/schemas/message';
 import { ChatMessage, ChatMessageError, ChatTTS, ChatTranslate } from '@/types/message';
 
 import { CreateMessageParams, IMessageService } from './type';
 
-export class ClientService implements IMessageService {
-  async createMessage(data: CreateMessageParams) {
-    const { id } = await MessageModel.create(data);
+/**
+ * Messages, read from the Hermes session store.
+ *
+ * Hermes owns the transcript: a turn is persisted server-side when it runs,
+ * and the API exposes no "append a message" call - the only way a message is
+ * created is by sending a turn. So this service is deliberately READ-ONLY.
+ *
+ * That is not a limitation to work around, it is the design the user asked
+ * for: there is exactly one store, and it is Hermes.
+ *
+ * What it means in practice:
+ *  - createMessage returns an id for the message the store is holding in its
+ *    optimistic map, but writes nothing. The store renders it immediately.
+ *  - getMessages returns the authoritative transcript, fetched from Hermes.
+ *    Callers should re-fetch after a turn completes, because the server writes
+ *    the rows as the turn ends, not as it streams.
+ *  - every update or remove call is a no-op: the UI's own state is the only
+ *    thing a local edit could change, and Hermes would overwrite it anyway.
+ */
 
-    return id;
+interface HermesMessageShape {
+  content: string | null;
+  display_kind?: string | null;
+  id: number | string;
+  role: string;
+  session_id: string;
+  timestamp: number;
+  tool_call_id?: string | null;
+  tool_name?: string | null;
+}
+
+interface HermesMessagesShape {
+  data?: HermesMessageShape[];
+  session_id?: string;
+}
+
+const ROLES = new Set(['assistant', 'system', 'tool', 'user']);
+
+const toMessage = (message: HermesMessageShape, topicId: string): ChatMessage => {
+  const role = ROLES.has(message.role) ? (message.role as ChatMessage['role']) : 'assistant';
+  const createdAt = Math.round((message.timestamp || 0) * 1000);
+
+  return {
+    content: message.content ?? '',
+    createdAt,
+    id: String(message.id),
+    role,
+    sessionId: topicId,
+    tool_call_id: message.tool_call_id ?? undefined,
+    topicId,
+    updatedAt: createdAt,
+  };
+};
+
+/** A local, non-persisted id for a message the store is showing optimistically. */
+const localId = () => `local_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+
+const fetchMessages = async (topicId: string): Promise<ChatMessage[]> => {
+  const res = await fetch(
+    `/api/hermes/sessions/${encodeURIComponent(topicId)}/messages?limit=300&order=oldest`,
+  );
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`Could not read the transcript (${res.status}): ${detail.slice(0, 200)}`);
   }
 
-  async batchCreateMessages(messages: ChatMessage[]) {
-    return MessageModel.batchCreate(messages);
+  const page = (await res.json()) as HermesMessagesShape;
+
+  return (page.data || []).map((message) => toMessage(message, topicId));
+};
+
+/**
+ * The Hermes session id an LobeChat call is really about.
+ *
+ * In this UI a topic IS a Hermes session, so topicId carries the session id.
+ * sessionId is kept as a fallback for callers that only know that shape.
+ */
+const sessionOf = (sessionId: string, topicId?: string) => topicId || sessionId;
+
+export class ClientService implements IMessageService {
+  /** Allocates an id; persistence happens when the turn runs on the server. */
+  async createMessage(data: CreateMessageParams): Promise<string> {
+    return (data as { id?: string }).id || localId();
   }
 
   async getMessages(sessionId: string, topicId?: string): Promise<ChatMessage[]> {
-    return MessageModel.query({ sessionId, topicId });
+    const target = sessionOf(sessionId, topicId);
+    if (!target) return [];
+
+    return fetchMessages(target);
   }
 
-  async getAllMessages() {
-    return MessageModel.queryAll();
+  async getAllMessagesInSession(sessionId: string): Promise<ChatMessage[]> {
+    return fetchMessages(sessionId);
   }
 
-  async countMessages() {
-    return MessageModel.count();
+  /**
+   * Every message this client knows about, across topics.
+   *
+   * Only used by the removed global-search surface, but the store still counts
+   * through it, so it fans out over the topic list rather than throwing.
+   */
+  async getAllMessages(): Promise<ChatMessage[]> {
+    const res = await fetch('/api/hermes/sessions?limit=100');
+    if (!res.ok) return [];
+
+    const page = (await res.json()) as { data?: { id: string }[] };
+    const ids = (page.data || []).map((s) => s.id);
+
+    const perTopic = await Promise.all(ids.map((id) => fetchMessages(id).catch(() => [])));
+
+    return perTopic.flat();
   }
 
-  async countTodayMessages() {
-    const topics = await MessageModel.queryAll();
-    return topics.filter(
-      (item) => dayjs(item.createdAt).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD'),
-    ).length;
+  async countMessages(): Promise<number> {
+    return (await this.getAllMessages()).length;
   }
 
-  async getAllMessagesInSession(sessionId: string) {
-    return MessageModel.queryBySessionId(sessionId);
+  async countTodayMessages(): Promise<number> {
+    const start = new Date().setHours(0, 0, 0, 0);
+
+    return (await this.getAllMessages()).filter((m) => m.createdAt >= start).length;
   }
 
-  async updateMessageError(id: string, error: ChatMessageError) {
-    return MessageModel.update(id, { error });
+  async hasMessages(): Promise<boolean> {
+    return (await this.countMessages()) > 0;
   }
 
-  async updateMessage(id: string, message: Partial<DB_Message>) {
-    return MessageModel.update(id, message);
-  }
+  /* ---------------------------------------------------------------------- */
+  /* No-ops: Hermes is the only writer.                                      */
+  /* ---------------------------------------------------------------------- */
 
-  async updateMessageTTS(id: string, tts: Partial<ChatTTS> | false) {
-    return MessageModel.update(id, { tts });
-  }
+  async batchCreateMessages(_messages: ChatMessage[]): Promise<void> {}
 
-  async updateMessageTranslate(id: string, translate: Partial<ChatTranslate> | false) {
-    return MessageModel.update(id, { translate });
-  }
+  async updateMessage(_id: string, _message: Partial<DB_Message>): Promise<void> {}
 
-  async updateMessagePluginState(id: string, value: Record<string, any>) {
-    return MessageModel.updatePluginState(id, value);
-  }
+  async updateMessageError(_id: string, _error: ChatMessageError): Promise<void> {}
 
-  async bindMessagesToTopic(topicId: string, messageIds: string[]) {
-    return MessageModel.batchUpdate(messageIds, { topicId });
-  }
+  async updateMessageTTS(_id: string, _tts: Partial<ChatTTS> | false): Promise<void> {}
 
-  async removeMessage(id: string) {
-    return MessageModel.delete(id);
-  }
+  async updateMessageTranslate(_id: string, _translate: Partial<ChatTranslate> | false): Promise<void> {}
 
-  async removeMessages(assistantId: string, topicId?: string) {
-    return MessageModel.batchDelete(assistantId, topicId);
-  }
+  async updateMessagePluginState(_id: string, _value: Record<string, any>): Promise<void> {}
 
-  async removeAllMessages() {
-    return MessageModel.clearTable();
-  }
+  async bindMessagesToTopic(_topicId: string, _messageIds: string[]): Promise<void> {}
 
-  async hasMessages() {
-    const number = await this.countMessages();
-    return number > 0;
-  }
+  async removeMessage(_id: string): Promise<void> {}
+
+  async removeMessages(_assistantId: string, _topicId?: string): Promise<void> {}
+
+  async removeAllMessages(): Promise<void> {}
 }

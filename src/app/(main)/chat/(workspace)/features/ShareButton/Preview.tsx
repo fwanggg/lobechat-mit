@@ -12,15 +12,13 @@ import { agentSelectors } from '@/store/agent/selectors';
 import { useSessionStore } from '@/store/session';
 import { sessionMetaSelectors, sessionSelectors } from '@/store/session/selectors';
 
-import PluginTag from '../PluginTag';
 import { useStyles } from './style';
 import { FieldType } from './type';
 
 const Preview = memo<FieldType & { title?: string }>(
   ({ title, withSystemRole, withBackground, withFooter }) => {
-    const [model, plugins, systemRole] = useAgentStore((s) => [
+    const [model, systemRole] = useAgentStore((s) => [
       agentSelectors.currentAgentModel(s),
-      agentSelectors.currentAgentPlugins(s),
       agentSelectors.currentAgentSystemRole(s),
     ]);
     const [isInbox, description, avatar, backgroundColor] = useSessionStore((s) => [
@@ -45,12 +43,7 @@ const Preview = memo<FieldType & { title?: string }>(
                 <Avatar avatar={avatar} background={backgroundColor} size={40} title={title} />
                 <ChatHeaderTitle
                   desc={displayDesc}
-                  tag={
-                    <>
-                      <ModelTag model={model} />
-                      {plugins?.length > 0 && <PluginTag plugins={plugins} />}
-                    </>
-                  }
+                  tag={<ModelTag model={model} />}
                   title={displayTitle}
                 />
               </Flexbox>

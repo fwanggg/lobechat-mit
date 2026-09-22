@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { Flexbox } from 'react-layout-kit';
 
 import { DESKTOP_HEADER_ICON_SIZE } from '@/const/layoutTokens';
-import { useOpenChatSettings } from '@/hooks/useInterceptingRoutes';
 import { useGlobalStore } from '@/store/global';
 import { systemStatusSelectors } from '@/store/global/selectors';
 import { useSessionStore } from '@/store/session';
@@ -30,8 +29,6 @@ const Main = memo(() => {
     sessionMetaSelectors.currentAgentAvatar(s),
     sessionMetaSelectors.currentAgentBackgroundColor(s),
   ]);
-
-  const openChatSettings = useOpenChatSettings();
 
   const displayTitle = isInbox ? t('inbox.title') : title;
   const displayDesc = isInbox ? t('inbox.desc') : description;
@@ -63,13 +60,7 @@ const Main = memo(() => {
           title={t('agentsAndConversations')}
         />
       }
-      <Avatar
-        avatar={avatar}
-        background={backgroundColor}
-        onClick={() => openChatSettings()}
-        size={40}
-        title={title}
-      />
+      <Avatar avatar={avatar} background={backgroundColor} size={40} title={title} />
       <ChatHeaderTitle desc={displayDesc} tag={<Tags />} title={displayTitle} />
     </Flexbox>
   );

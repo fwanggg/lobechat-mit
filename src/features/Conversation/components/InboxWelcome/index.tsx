@@ -9,7 +9,6 @@ import { Center, Flexbox } from 'react-layout-kit';
 import { useGreeting } from '@/hooks/useGreeting';
 import { featureFlagsSelectors, useServerConfigStore } from '@/store/serverConfig';
 
-import AgentsSuggest from './AgentsSuggest';
 import QuestionSuggest from './QuestionSuggest';
 
 const useStyles = createStyles(({ css, responsive }) => ({
@@ -57,10 +56,7 @@ const InboxWelcome = memo(() => {
           {t('guide.defaultMessage')}
         </Markdown>
         {
-          showWelcomeSuggest && <>
-            <AgentsSuggest mobile={mobile} />
-            <QuestionSuggest mobile={mobile} />
-          </>
+          showWelcomeSuggest && <QuestionSuggest mobile={mobile} />
         }
       </Flexbox>
     </Center>

@@ -2,8 +2,7 @@ export default {
   ModelSwitch: {
     title: '模型',
   },
-  agentDefaultMessage:
-    '你好，我是 **{{name}}**，你可以立即与我开始对话，也可以前往 [助手设置](/chat/settings#session={{id}}) 完善我的信息。',
+  agentDefaultMessage: '你好，我是 **{{name}}**，你可以立即与我开始对话。',
   agentDefaultMessageWithSystemRole: '你好，我是 **{{name}}**，{{systemRole}}，让我们开始对话吧！',
   agentsAndConversations: '助手与会话',
   backToBottom: '跳转至当前',

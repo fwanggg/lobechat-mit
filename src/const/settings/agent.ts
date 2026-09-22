@@ -21,6 +21,13 @@ export const DEFAULT_AGENT_CHAT_CONFIG: LobeAgentChatConfig = {
 
 /** The single model this build talks to: the household agent's OpenAI-compatible API. */
 export const FAMILY_OS_MODEL = 'family-os';
+/**
+ * The only provider this build sends to. Hermes owns the conversation, so the
+ * request goes to our own /api/chat/hermes branch rather than to any vendor.
+ * Set on every active config in the agent selectors - without it the store
+ * would post to /api/chat/openai and never reach the household agent.
+ */
+export const FAMILY_OS_PROVIDER = 'hermes';
 
 export const DEFAULT_AGENT_CONFIG: LobeAgentConfig = {
   chatConfig: DEFAULT_AGENT_CHAT_CONFIG,

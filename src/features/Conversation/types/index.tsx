@@ -8,7 +8,6 @@ import { ChatMessage } from '@/types/message';
 import { type ActionsBarProps } from '../components/ChatItem/ActionsBar';
 
 export type OnActionsClick = (action: ActionEvent, message: ChatMessage) => void;
-export type OnAvatarsClick = (role: RenderRole) => ChatItemProps['onAvatarClick'];
 export type RenderRole = LLMRoleType | 'default' | string;
 export type RenderMessage = FC<ChatMessage & { editableContent: ReactNode }>;
 export type RenderMessageExtra = FC<ChatMessage>;

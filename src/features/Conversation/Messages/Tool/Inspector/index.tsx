@@ -18,7 +18,6 @@ import { pluginSelectors, toolSelectors } from '@/store/tool/selectors';
 import { ChatPluginPayload } from '@/types/message';
 
 import PluginResult from './PluginResultJSON';
-import Settings from './Settings';
 import { useStyles } from './style';
 
 export interface InspectorProps {
@@ -101,7 +100,6 @@ const Inspector = memo<InspectorProps>(
               }}
               title={t(open ? 'debug.off' : 'debug.on')}
             />
-            <Settings id={identifier} />
           </Flexbox>
         </Flexbox>
         {open && (

@@ -32,6 +32,7 @@
     "build:analyze": "ANALYZE=true next build",
     "build:docker": "DOCKER=true next build && npm run build-sitemap",
     "dev": "next dev -p 3010",
+    "hermes:tunnel": "ssh -N -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -L 18642:127.0.0.1:8642 hermes-box",
     "dev:clerk-proxy": "ngrok http http://localhost:3011",
     "docs:i18n": "lobe-i18n md && npm run workflow:docs && npm run lint:mdx",
     "docs:seo": "lobe-seo && npm run workflow:mdx && npm run lint:mdx",

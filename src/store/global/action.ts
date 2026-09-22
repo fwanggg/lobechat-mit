@@ -22,10 +22,8 @@ const n = setNamespace('g');
  */
 export interface GlobalStoreAction {
   switchBackToChat: (sessionId?: string) => void;
-  toggleChatSideBar: (visible?: boolean) => void;
   toggleExpandSessionGroup: (id: string, expand: boolean) => void;
   toggleMobileTopic: (visible?: boolean) => void;
-  toggleSystemRole: (visible?: boolean) => void;
   updateSystemStatus: (status: Partial<SystemStatus>, action?: any) => void;
   useCheckLatestVersion: (enabledCheck?: boolean) => SWRResponse<string>;
   useInitSystemStatus: () => SWRResponse;
@@ -39,12 +37,6 @@ export const globalActionSlice: StateCreator<
 > = (set, get) => ({
   switchBackToChat: (sessionId) => {
     get().router?.push(SESSION_CHAT_URL(sessionId || INBOX_SESSION_ID, get().isMobile));
-  },
-  toggleChatSideBar: (newValue) => {
-    const showChatSideBar =
-      typeof newValue === 'boolean' ? newValue : !get().status.showChatSideBar;
-
-    get().updateSystemStatus({ showChatSideBar }, n('toggleAgentPanel', newValue));
   },
   toggleExpandSessionGroup: (id, expand) => {
     const { status } = get();
@@ -64,11 +56,6 @@ export const globalActionSlice: StateCreator<
       typeof newValue === 'boolean' ? newValue : !get().status.mobileShowTopic;
 
     get().updateSystemStatus({ mobileShowTopic }, n('toggleMobileTopic', newValue));
-  },
-  toggleSystemRole: (newValue) => {
-    const showSystemRole = typeof newValue === 'boolean' ? newValue : !get().status.mobileShowTopic;
-
-    get().updateSystemStatus({ showSystemRole }, n('toggleMobileTopic', newValue));
   },
   updateSystemStatus: (status, action) => {
     // Status cannot be modified when it is not initialized

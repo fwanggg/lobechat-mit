@@ -29,19 +29,6 @@ afterEach(() => {
 });
 
 describe('createPreferenceSlice', () => {
-  describe('toggleChatSideBar', () => {
-    it('should toggle chat sidebar', () => {
-      const { result } = renderHook(() => useGlobalStore());
-
-      act(() => {
-        useGlobalStore.getState().updateSystemStatus({ showChatSideBar: false });
-        result.current.toggleChatSideBar();
-      });
-
-      expect(result.current.status.showChatSideBar).toBe(true);
-    });
-  });
-
   describe('toggleExpandSessionGroup', () => {
     it('should toggle expand session group', () => {
       const { result } = renderHook(() => useGlobalStore());
@@ -66,19 +53,6 @@ describe('createPreferenceSlice', () => {
       });
 
       expect(result.current.status.mobileShowTopic).toBe(true);
-    });
-  });
-
-  describe('toggleSystemRole', () => {
-    it('should toggle system role', () => {
-      const { result } = renderHook(() => useGlobalStore());
-
-      act(() => {
-        useGlobalStore.setState({ isStatusInit: true });
-        result.current.toggleSystemRole(true);
-      });
-
-      expect(result.current.status.showSystemRole).toBe(true);
     });
   });
 

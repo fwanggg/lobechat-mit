@@ -41,14 +41,11 @@ const parserFallbackLang = () => {
    * 2) The available locales (they must contain the default locale).
    * 3) The default locale.
    */
-  let fallbackLang: string = resolveAcceptLanguage(
+  const fallbackLang: string = resolveAcceptLanguage(
     headers().get('accept-language') || '',
-    //  Invalid locale identifier 'ar'. A valid locale should follow the BCP 47 'language-country' format.
-    locales.map((locale) => (locale === 'ar' ? 'ar-EG' : locale)),
+    [...locales],
     'en-US',
   );
-  // if match the ar-EG then fallback to ar
-  if (fallbackLang === 'ar-EG') fallbackLang = 'ar';
 
   return fallbackLang;
 };
@@ -68,7 +65,7 @@ const GlobalLayout = async ({ children }: PropsWithChildren) => {
   // So we need to use the fallback language parsed by accept-language
   const userLocale = defaultLang?.value || fallbackLang;
 
-  const antdLocale = await getAntdLocale(userLocale);
+  const antdLocale = getAntdLocale();
 
   // get default feature flags to use with ssr
   const serverFeatureFlags = getServerFeatureFlagsValue();
